@@ -341,7 +341,7 @@ def main(argv=None):
 
             pred = sess.run(pred_annotation, feed_dict={image: feed_image, annotation: feed_annotation,
                                                     keep_probability: 1.0})
-            valid_annotations = np.squeeze(valid_annotations, axis=3)
+            feed_annotation = np.squeeze(feed_annotation, axis=3)
             pred = np.squeeze(pred, axis=3)
 
             utils.save_image(feed_image[0][... , 1].astype(np.uint8), FLAGS.logs_dir, name="inp_" + f"{brain_num}_{z_idx}")
