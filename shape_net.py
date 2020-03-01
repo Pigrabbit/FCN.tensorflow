@@ -317,19 +317,18 @@ def main(argv=None):
 
     elif FLAGS.mode == "visualize":
         brain_to_visualize = {
-            1: 90,
             2: 90,
             3: 90,
             4: 90,
             5: 90,
-            6: 90,
             7: 90,
             8: 90,
-            9: 90,
-            10: 90
+            10: 90,
+            20: 90,
+            30: 90,
+            40: 90
         }
 
-        # valid_images, valid_annotations = validation_dataset_reader.get_random_batch(FLAGS.batch_size)
         for brain_num in brain_to_visualize:
             z_idx = brain_to_visualize[brain_num]
 
