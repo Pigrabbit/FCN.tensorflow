@@ -21,7 +21,8 @@ class BatchDatset:
     batch_offset = 0
     epochs_completed = 0
     layers = 155
-    brain = 0
+    brain_idx = 0
+    brain_filename = ""
 
     def __init__(self, records_list, image_options={}):
         """
@@ -51,11 +52,11 @@ class BatchDatset:
         images = np.zeros((self.layers, 224, 224, 4))
         masks = np.empty((self.layers, 224, 224, 1))
 
-        t1_file    = [file for file in self.files[self.brain]["input"] if file.endswith("t1.nii.gz")][0]
-        t1ce_file  = [file for file in self.files[self.brain]["input"] if file.endswith("t1ce.nii.gz")][0]
-        t2_file    = [file for file in self.files[self.brain]["input"] if file.endswith("t2.nii.gz")][0]
-        flair_file = [file for file in self.files[self.brain]["input"] if file.endswith("flair.nii.gz")][0]
-        mask_file   = self.files[self.brain]["mask"][0]
+        t1_file    = [file for file in self.files[self.brain_idx]["input"] if file.endswith("t1.nii.gz")][0]
+        t1ce_file  = [file for file in self.files[self.brain_idx]["input"] if file.endswith("t1ce.nii.gz")][0]
+        t2_file    = [file for file in self.files[self.brain_idx]["input"] if file.endswith("t2.nii.gz")][0]
+        flair_file = [file for file in self.files[self.brain_idx]["input"] if file.endswith("flair.nii.gz")][0]
+        mask_file   = self.files[self.brain_idx]["mask"][0]
 
         t1_img_array    = nib.load(t1_file).get_fdata()
         t1ce_img_array  = nib.load(t1ce_file).get_fdata()
@@ -86,10 +87,20 @@ class BatchDatset:
 
     def _set_random_brain(self):
         random_brain = random.choice(list(range(len(self.files))))
-        self.brain = random_brain
+        self.brain_idx = random_brain
+        self.brain_filename = self.files[self.brain_idx]["filename"]
 
     def get_single_brain(self, brain_index):
-        self.brain = brain_index
+        self.brain_idx = brain_index
+        self.brain_filename = self.files[self.brain_idx]["filename"]
+        self._read_images()
+        return self.images, self.annotations
+
+    def get_single_brain_by_name(self, filename):
+        self.brain_filename = filename
+        for i in range(len(self.files)):
+            if (self.files[i]["filename"] == filename):
+                self.brain_idx = i
         self._read_images()
         return self.images, self.annotations
 
@@ -98,6 +109,9 @@ class BatchDatset:
         regrouped[regrouped == self.UNKNOWN_CLASS] = 0
         regrouped[regrouped != self.BACKGROUD_CLASS] = 1
         return regrouped
+
+    def get_brain_filename(self):
+        return self.brain_filename
 
     def get_records(self):
         return self.images, self.annotations

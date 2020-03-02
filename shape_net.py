@@ -269,6 +269,8 @@ def main(argv=None):
     train_records, valid_records = scene_parsing.read_dataset(FLAGS.data_dir)
     print(len(train_records))
     print(len(valid_records))
+    # for record in valid_records:
+    #     print(record["filename"])
 
     print("Setting up dataset reader")
     image_options = {'resize': True, 'resize_size': IMAGE_SIZE}
@@ -317,22 +319,33 @@ def main(argv=None):
 
     elif FLAGS.mode == "visualize":
         brain_to_visualize = {
-            2: 90,
-            3: 90,
-            4: 90,
-            5: 90,
-            7: 90,
-            8: 90,
-            10: 90,
-            20: 90,
-            30: 90,
-            40: 90
+            "Brats18_TCIA06_372_1": 90,
+            "Brats18_CBICA_AQU_1": 90,
+            "Brats18_CBICA_BHK_1": 90,
+            "Brats18_TCIA03_338_1": 90,
+            "Brats18_TCIA02_370_1": 90,
+            "Brats18_CBICA_BFP_1": 90,
+            "Brats18_TCIA01_401_1": 90,
+            "Brats18_2013_11_1": 90,
+            "Brats18_2013_2_1": 90,
+            "Brats18_CBICA_ATP_1": 90,
+            "Brats18_CBICA_AQO_1": 90
+            # 2: 90,
+            # 3: 90,
+            # 4: 90,
+            # 5: 90,
+            # 7: 90,
+            # 8: 90,
+            # 10: 90,
+            # 20: 90,
+            # 30: 90,
+            # 40: 90
         }
 
-        for brain_num in brain_to_visualize:
-            z_idx = brain_to_visualize[brain_num]
+        for brain_name in brain_to_visualize:
+            z_idx = brain_to_visualize[brain_name]
 
-            valid_images, valid_annotations = validation_dataset_reader.get_single_brain(brain_num)
+            valid_images, valid_annotations = validation_dataset_reader.get_single_brain_by_name(brain_name)
             feed_image = valid_images[z_idx, ...]
             feed_image = feed_image[None, ...]
             feed_annotation = valid_annotations[z_idx, ...]
@@ -343,10 +356,10 @@ def main(argv=None):
             feed_annotation = np.squeeze(feed_annotation, axis=3)
             pred = np.squeeze(pred, axis=3)
 
-            utils.save_image(feed_image[0][... , 1].astype(np.uint8), FLAGS.logs_dir, name="inp_" + f"{brain_num}_{z_idx}")
-            utils.save_image((feed_annotation[0] * 100).astype(np.uint8), FLAGS.logs_dir, name="gt_" + f"{brain_num}_{z_idx}")
-            utils.save_image((pred[0] * 100).astype(np.uint8), FLAGS.logs_dir, name="pred_" + f"{brain_num}_{z_idx}")
-            print(f"Saved image: {brain_num}_{z_idx}")
+            utils.save_image(feed_image[0][... , 1].astype(np.uint8), FLAGS.logs_dir, name="inp_" + f"{brain_name}_{z_idx}")
+            utils.save_image((feed_annotation[0] * 100).astype(np.uint8), FLAGS.logs_dir, name="gt_" + f"{brain_name}_{z_idx}")
+            utils.save_image((pred[0] * 100).astype(np.uint8), FLAGS.logs_dir, name="pred_" + f"{brain_name}_{z_idx}")
+            print(f"Saved image: {brain_name}_{z_idx}")
 
     elif FLAGS.mode == "evaluate":
         gt_tumor = 0
