@@ -1,6 +1,7 @@
 from __future__ import print_function
 import tensorflow as tf
 import numpy as np
+import json
 
 import TensorflowUtils as utils
 import read_BraTSData as scene_parsing
@@ -318,29 +319,8 @@ def main(argv=None):
                 saver.save(sess, FLAGS.logs_dir + "model.ckpt", itr)
 
     elif FLAGS.mode == "visualize":
-        brain_to_visualize = {
-            "Brats18_TCIA06_372_1": 90,
-            "Brats18_CBICA_AQU_1": 90,
-            "Brats18_CBICA_BHK_1": 90,
-            "Brats18_TCIA03_338_1": 90,
-            "Brats18_TCIA02_370_1": 90,
-            "Brats18_CBICA_BFP_1": 90,
-            "Brats18_TCIA01_401_1": 90,
-            "Brats18_2013_11_1": 90,
-            "Brats18_2013_2_1": 90,
-            "Brats18_CBICA_ATP_1": 90,
-            "Brats18_CBICA_AQO_1": 90
-            # 2: 90,
-            # 3: 90,
-            # 4: 90,
-            # 5: 90,
-            # 7: 90,
-            # 8: 90,
-            # 10: 90,
-            # 20: 90,
-            # 30: 90,
-            # 40: 90
-        }
+        with open('./visualize_set.json') as f:
+            brain_to_visualize = json.load(f)
 
         for brain_name in brain_to_visualize:
             z_idx = brain_to_visualize[brain_name]
