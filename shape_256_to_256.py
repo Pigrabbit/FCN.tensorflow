@@ -11,7 +11,7 @@ from six.moves import xrange
 
 FLAGS = tf.flags.FLAGS
 tf.flags.DEFINE_integer("batch_size", "2", "batch size for training")
-tf.flags.DEFINE_string("logs_dir", "logs/", "path to logs directory")
+tf.flags.DEFINE_string("logs_dir", "logs/shape_256_to_256", "path to logs directory")
 tf.flags.DEFINE_string("data_dir", "data/BraTS2018/MICCAI_BraTS_2018_Data_Training/HGG", "path to dataset")
 tf.flags.DEFINE_float("learning_rate", "1e-5", "Learning rate for Adam Optimizer")
 tf.flags.DEFINE_string("model_dir", "Model_zoo/", "Path to vgg model mat")

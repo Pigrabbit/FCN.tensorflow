@@ -10,7 +10,7 @@ from six.moves import xrange
 
 FLAGS = tf.flags.FLAGS
 tf.flags.DEFINE_integer("batch_size", "2", "batch size for training")
-tf.flags.DEFINE_string("logs_dir", "logs/", "path to logs directory")
+tf.flags.DEFINE_string("logs_dir", "logs/fcn", "path to logs directory")
 tf.flags.DEFINE_string("data_dir", "data/BraTS2018/MICCAI_BraTS_2018_Data_Training/HGG", "path to dataset")
 tf.flags.DEFINE_float("learning_rate", "1e-5", "Learning rate for Adam Optimizer")
 tf.flags.DEFINE_string("model_dir", "Model_zoo/", "Path to vgg model mat")
@@ -257,17 +257,38 @@ def main(argv=None):
                 saver.save(sess, FLAGS.logs_dir + "model.ckpt", itr)
 
     elif FLAGS.mode == "visualize":
-        valid_images, valid_annotations = validation_dataset_reader.get_random_batch(FLAGS.batch_size)
-        pred = sess.run(pred_annotation, feed_dict={image: valid_images, annotation: valid_annotations,
-                                                    keep_probability: 1.0})
-        valid_annotations = np.squeeze(valid_annotations, axis=3)
-        pred = np.squeeze(pred, axis=3)
+        with open('./visualize_set.json') as f:
+            brain_to_visualize = json.load(f)
 
-        for itr in range(FLAGS.batch_size):
-            utils.save_image(valid_images[itr].astype(np.uint8), FLAGS.logs_dir, name="inp_" + str(5+itr))
-            utils.save_image((valid_annotations[itr] * 100).astype(np.uint8), FLAGS.logs_dir, name="gt_" + str(5+itr))
-            utils.save_image((pred[itr] * 100).astype(np.uint8), FLAGS.logs_dir, name="pred_" + str(5+itr))
-            print("Saved image: %d" % itr)
+        for brain_name in brain_to_visualize:
+            z_idx = brain_to_visualize[brain_name]
+
+            valid_images, valid_annotations = validation_dataset_reader.get_single_brain_by_name(brain_name)
+            feed_image = valid_images[z_idx, ...]
+            feed_image = feed_image[None, ...]
+            feed_annotation = valid_annotations[z_idx, ...]
+            feed_annotation = feed_annotation[None, ...]
+
+            pred = sess.run(pred_annotation, feed_dict={image: feed_image, annotation: feed_annotation,
+                                                    keep_probability: 1.0})
+            feed_annotation = np.squeeze(feed_annotation, axis=3)
+            pred = np.squeeze(pred, axis=3)
+
+            utils.save_image(feed_image[0][... , 1].astype(np.uint8), FLAGS.logs_dir, name="inp_" + f"{brain_name}_{z_idx}")
+            utils.save_image((feed_annotation[0] * 100).astype(np.uint8), FLAGS.logs_dir, name="gt_" + f"{brain_name}_{z_idx}")
+            utils.save_image((pred[0] * 100).astype(np.uint8), FLAGS.logs_dir, name="pred_" + f"{brain_name}_{z_idx}")
+            print(f"Saved image: {brain_name}_{z_idx}")
+        # valid_images, valid_annotations = validation_dataset_reader.get_random_batch(FLAGS.batch_size)
+        # pred = sess.run(pred_annotation, feed_dict={image: valid_images, annotation: valid_annotations,
+        #                                             keep_probability: 1.0})
+        # valid_annotations = np.squeeze(valid_annotations, axis=3)
+        # pred = np.squeeze(pred, axis=3)
+
+        # for itr in range(FLAGS.batch_size):
+        #     utils.save_image(valid_images[itr].astype(np.uint8), FLAGS.logs_dir, name="inp_" + str(5+itr))
+        #     utils.save_image((valid_annotations[itr] * 100).astype(np.uint8), FLAGS.logs_dir, name="gt_" + str(5+itr))
+        #     utils.save_image((pred[itr] * 100).astype(np.uint8), FLAGS.logs_dir, name="pred_" + str(5+itr))
+        #     print("Saved image: %d" % itr)
 
     elif FLAGS.mode == "evaluate":
         gt_tumor = 0
