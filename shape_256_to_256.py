@@ -145,7 +145,7 @@ def inference(image, keep_prob):
         W_s2_4 = utils.weight_variable([3, 3, 256, 256], name="W_s2_4")
         b_s2_4 = utils.bias_variable([256], name="b_s2_4")
         conv_s2_4 = utils.conv2d_basic(relu_dropout_s2_3, W_s2_4, b_s2_4)
-        relu_s2_4 = tf.nn.relu(conv_s2_1, name="relu_s2_4")
+        relu_s2_4 = tf.nn.relu(conv_s2_4, name="relu_s2_4")
         if FLAGS.debug:
             utils.add_activation_summary(relu_s2_4)
         relu_dropout_s2_4 = tf.nn.dropout(relu_s2_4, keep_prob=keep_prob)

@@ -10,7 +10,8 @@ import BatchDatsetReader as dataset
 from six.moves import xrange
 
 FLAGS = tf.flags.FLAGS
-tf.flags.DEFINE_integer("batch_size", "2", "batch size for training")
+# tf.flags.DEFINE_integer("batch_size", "2", "batch size for training")
+tf.flags.DEFINE_integer("batch_size", "16", "batch size for training")
 tf.flags.DEFINE_string("logs_dir", "logs/shape_256_to_128", "path to logs directory")
 tf.flags.DEFINE_string("data_dir", "data/BraTS2018/MICCAI_BraTS_2018_Data_Training/HGG", "path to dataset")
 tf.flags.DEFINE_float("learning_rate", "1e-5", "Learning rate for Adam Optimizer")
@@ -20,7 +21,7 @@ tf.flags.DEFINE_string('mode', "train", "Mode train/ test/ visualize/ evalutate"
 
 MODEL_URL = 'http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat'
 
-MAX_ITERATION = int(1e5 + 1)
+MAX_ITERATION = int(5 * 1e4 + 1)
 NUM_OF_CLASSESS = 2
 IMAGE_SIZE = 224
 NUM_INPUT_CHANNEL = 4
@@ -142,10 +143,10 @@ def inference(image, keep_prob):
             utils.add_activation_summary(relu_s2_3)
         relu_dropout_s2_3 = tf.nn.dropout(relu_s2_3, keep_prob=keep_prob)
 
-        W_s2_4 = utils.weight_variable([3, 3, 256, 128], name="W_s2_4")
+        W_s2_4 = utils.weight_variable([1, 1, 256, 128], name="W_s2_4")
         b_s2_4 = utils.bias_variable([128], name="b_s2_4")
         conv_s2_4 = utils.conv2d_basic(relu_dropout_s2_3, W_s2_4, b_s2_4)
-        relu_s2_4 = tf.nn.relu(conv_s2_1, name="relu_s2_4")
+        relu_s2_4 = tf.nn.relu(conv_s2_4, name="relu_s2_4")
         if FLAGS.debug:
             utils.add_activation_summary(relu_s2_4)
         relu_dropout_s2_4 = tf.nn.dropout(relu_s2_4, keep_prob=keep_prob)
@@ -214,6 +215,7 @@ def inference(image, keep_prob):
 
         ######################### concat shape network and FCN ############################
         concat = tf.concat([relu_dropout_s2_4, conv_t3], axis=-1, name="concat")
+        print(f"concat layer shape: {concat.shape}")
         
         W_label = utils.weight_variable([1, 1, 384, NUM_OF_CLASSESS], name="W_label")
         b_label = utils.bias_variable([NUM_OF_CLASSESS], name="b_label")
