@@ -10,8 +10,7 @@ import BatchDatsetReader as dataset
 from six.moves import xrange
 
 FLAGS = tf.flags.FLAGS
-# tf.flags.DEFINE_integer("batch_size", "2", "batch size for training")
-tf.flags.DEFINE_integer("batch_size", "16", "batch size for training")
+tf.flags.DEFINE_integer("batch_size", "2", "batch size for training")
 tf.flags.DEFINE_string("logs_dir", "logs/shape_256_to_128", "path to logs directory")
 tf.flags.DEFINE_string("data_dir", "data/BraTS2018/MICCAI_BraTS_2018_Data_Training/HGG", "path to dataset")
 tf.flags.DEFINE_float("learning_rate", "1e-5", "Learning rate for Adam Optimizer")
@@ -21,7 +20,7 @@ tf.flags.DEFINE_string('mode', "train", "Mode train/ test/ visualize/ evalutate"
 
 MODEL_URL = 'http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat'
 
-MAX_ITERATION = int(5 * 1e4 + 1)
+MAX_ITERATION = int(1e5 + 1)
 NUM_OF_CLASSESS = 2
 IMAGE_SIZE = 224
 NUM_INPUT_CHANNEL = 4
