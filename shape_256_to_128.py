@@ -358,10 +358,10 @@ def main(argv=None):
                 pred = np.squeeze(pred, axis=3)
 
                 gt = np.asarray(feed_annotation[0]).astype(np.bool)
-                if (gt.sum() == 0) {
+                if (gt.sum() == 0):
                     # case which has no tumor on the slice
                     continue
-                }
+                
                 seg = np.asarray(pred[0]).astype(np.bool)
                 pixels = len(gt) * len(gt)
                 
