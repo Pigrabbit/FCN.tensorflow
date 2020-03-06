@@ -304,6 +304,10 @@ def main(argv=None):
 
             for itr in range(valid_images.shape[0]):
                 gt = np.asarray(valid_annotations[itr]).astype(np.bool)
+                if (gt.sum() == 0) {
+                    # case which has no tumor on the slice
+                    continue
+                }
                 seg = np.asarray(pred[itr]).astype(np.bool)
                 pixels = len(gt) * len(gt)
                 

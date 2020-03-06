@@ -354,20 +354,17 @@ def main(argv=None):
                 feed_image = feed_image[None, ...]
                 feed_annotation = valid_annotations[z, ...]
                 feed_annotation = feed_annotation[None, ...]
-                # pred = sess.run(pred_annotation, feed_dict={image: valid_images, annotation: valid_annotations,
-                #                                     keep_probability: 1.0})
-                # valid_annotations = np.squeeze(valid_annotations, axis=3)
-                # pred = np.squeeze(pred, axis=3)
+                
                 pred = sess.run(pred_annotation, feed_dict={image: feed_image, annotation: feed_annotation,
                                                     keep_probability: 1.0})
                 feed_annotation = np.squeeze(feed_annotation, axis=3)
                 pred = np.squeeze(pred, axis=3)
 
-            # for itr in range(valid_images.shape[0]):
-                # gt = np.asarray(valid_annotations[itr]).astype(np.bool)
-                # seg = np.asarray(pred[itr]).astype(np.bool)
-                # pixels = len(gt) * len(gt)
                 gt = np.asarray(feed_annotation[0]).astype(np.bool)
+                if (gt.sum() == 0) {
+                    # case which has no tumor on the slice
+                    continue
+                }
                 seg = np.asarray(pred[0]).astype(np.bool)
                 pixels = len(gt) * len(gt)
                 
