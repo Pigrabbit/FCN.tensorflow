@@ -1,7 +1,10 @@
-logs/*
 .idea
-Data_zoo/*
 Model_zoo/*
 data/
 *.pyc
+*.csv
 .ipynb_checkpoints/
+
+*model.ckpt*
+checkpoint
+events.out.*
