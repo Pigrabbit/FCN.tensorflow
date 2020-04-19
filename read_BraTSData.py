@@ -1,4 +1,5 @@
 __author__ = 'charlie'
+__modified_by__ = 'Donghyuk'
 import numpy as np
 import os
 import random
@@ -8,8 +9,6 @@ import glob
 
 import TensorflowUtils as utils
 
-# DATA_URL = 'http://sceneparsing.csail.mit.edu/data/ADEChallengeData2016.zip'
-# DATA_URL = 'http://data.csail.mit.edu/places/ADEchallenge/ADEChallengeData2016.zip'
 TRAIN_SPLIT = 160
 
 def read_dataset(data_dir):

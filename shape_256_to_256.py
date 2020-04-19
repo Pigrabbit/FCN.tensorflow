@@ -86,12 +86,7 @@ def inference(image, keep_prob):
     print("setting up vgg initialized conv layers ...")
     # get pre-trained model
     model_data = utils.get_model_data(FLAGS.model_dir, MODEL_URL)
-
-    # mean = model_data['normalization'][0][0][0]
-    # mean_pixel = np.mean(mean, axis=(0, 1))
-
     weights = np.squeeze(model_data['layers'])
-    # processed_image = utils.process_image(image, mean_pixel)
     processed_image = image
 
     with tf.variable_scope("inference"):
@@ -155,13 +150,13 @@ def inference(image, keep_prob):
 
         conv_final_layer = image_net["conv5_3"]
         pool5 = utils.max_pool_2x2(conv_final_layer)
-        print(f"VGG-19 pool5 layer: {pool5.shape}")
+        # print(f"VGG-19 pool5 layer: {pool5.shape}")
 
         # [height, width, in_channel, out_channel]
         W6 = utils.weight_variable([7, 7, 512, 4096], name="W6") 
         b6 = utils.bias_variable([4096], name="b6")
         conv6 = utils.conv2d_basic(pool5, W6, b6)
-        print(f"VGG-19 conv6 layer: {conv6.shape}")
+        # print(f"VGG-19 conv6 layer: {conv6.shape}")
         relu6 = tf.nn.relu(conv6, name="relu6")
         if FLAGS.debug:
             utils.add_activation_summary(relu6)
@@ -170,7 +165,7 @@ def inference(image, keep_prob):
         W7 = utils.weight_variable([1, 1, 4096, 4096], name="W7")
         b7 = utils.bias_variable([4096], name="b7")
         conv7 = utils.conv2d_basic(relu_dropout6, W7, b7)
-        print(f"VGG-19 conv7 layer: {conv7.shape}")
+        # print(f"VGG-19 conv7 layer: {conv7.shape}")
         relu7 = tf.nn.relu(conv7, name="relu7")
         if FLAGS.debug:
             utils.add_activation_summary(relu7)
@@ -179,7 +174,7 @@ def inference(image, keep_prob):
         W8 = utils.weight_variable([1, 1, 4096, NUM_OF_CLASSESS], name="W8")
         b8 = utils.bias_variable([NUM_OF_CLASSESS], name="b8")
         conv8 = utils.conv2d_basic(relu_dropout7, W8, b8)
-        print(f"VGG-19 conv8 layer: {conv8.shape}")
+        # print(f"VGG-19 conv8 layer: {conv8.shape}")
         # annotation_pred1 = tf.argmax(conv8, dimension=3, name="prediction1")
 
         # now to upscale to actual image size
@@ -188,10 +183,10 @@ def inference(image, keep_prob):
         b_t1 = utils.bias_variable([deconv_shape1[3].value], name="b_t1")
         # stride is 2(factored by 2) for this transpose upsampling
         conv_t1 = utils.conv2d_transpose_strided(conv8, W_t1, b_t1, output_shape=tf.shape(image_net["pool4"]))
-        print(f"FCN conv_t1 layer: {conv_t1.shape}")
+        # print(f"FCN conv_t1 layer: {conv_t1.shape}")
         # combines 2x upsampled layer and pool4 layer
         fuse_1 = tf.add(conv_t1, image_net["pool4"], name="fuse_1")
-        print(f"FCN fuse_1 layer: {fuse_1.shape}")
+        # print(f"FCN fuse_1 layer: {fuse_1.shape}")
 
         deconv_shape2 = image_net["pool3"].get_shape()
         W_t2 = utils.weight_variable([4, 4, deconv_shape2[3].value, deconv_shape1[3].value], name="W_t2")
@@ -199,10 +194,10 @@ def inference(image, keep_prob):
         # deconvolution fuse1 with W_t2
         # stride is 2(factored by 2) for this transpose upsampling
         conv_t2 = utils.conv2d_transpose_strided(fuse_1, W_t2, b_t2, output_shape=tf.shape(image_net["pool3"]))
-        print(f"FCN conv_t2 layer: {conv_t2.shape}")
+        # print(f"FCN conv_t2 layer: {conv_t2.shape}")
         # combines 2x upsampled previous fused layer and pool3 layer
         fuse_2 = tf.add(conv_t2, image_net["pool3"], name="fuse_2")
-        print(f"FCN fuse_2 layer: {fuse_2.shape}")
+        # print(f"FCN fuse_2 layer: {fuse_2.shape}")
 
         shape = tf.shape(image)
         # deconv_shape3 = tf.stack([shape[0], shape[1], shape[2], NUM_OF_CLASSESS])
@@ -213,7 +208,7 @@ def inference(image, keep_prob):
         b_t3 = utils.bias_variable([256], name="b_t3")
         # finally upsample the layer to replace input size
         conv_t3 = utils.conv2d_transpose_strided(fuse_2, W_t3, b_t3, output_shape=deconv_shape3, stride=8)
-        print(f"FCN conv_t3 layer: {conv_t3.shape}")
+        # print(f"FCN conv_t3 layer: {conv_t3.shape}")
 
         ######################### concat shape network and FCN ############################
         concat = tf.concat([relu_dropout_s2_4, conv_t3], axis=-1, name="concat")
@@ -224,10 +219,8 @@ def inference(image, keep_prob):
 
         #################################################################################3
 
-        # annotation_pred = tf.argmax(conv_t3, dimension=3, name="prediction")
         annotation_pred = tf.argmax(conv_label, dimension=3, name="prediction")
         
-    # return tf.expand_dims(annotation_pred, dim=3), conv_t3
     return tf.expand_dims(annotation_pred, dim=3), conv_label
 
 
@@ -243,8 +236,7 @@ def train(loss_val, var_list):
 
 def main(argv=None):
     keep_probability = tf.placeholder(tf.float32, name="keep_probabilty")
-    # image = tf.placeholder(tf.float32, shape=[None, IMAGE_SIZE, IMAGE_SIZE, 3], name="input_image")
-    # 4 for t1, t1ce, t2 and flair
+    # In MRI image, there are four layer, which are t1, t1ce, t2 and flair
     image = tf.placeholder(tf.float32, shape=[None, IMAGE_SIZE, IMAGE_SIZE, 4], name="input_image")
     annotation = tf.placeholder(tf.int32, shape=[None, IMAGE_SIZE, IMAGE_SIZE, 1], name="annotation")
 
@@ -270,8 +262,6 @@ def main(argv=None):
     train_records, valid_records = scene_parsing.read_dataset(FLAGS.data_dir)
     print(len(train_records))
     print(len(valid_records))
-    # for record in valid_records:
-    #     print(record["filename"])
 
     print("Setting up dataset reader")
     image_options = {'resize': True, 'resize_size': IMAGE_SIZE}
@@ -347,7 +337,7 @@ def main(argv=None):
         overlapped = 0
         for i in range(len(valid_records)):
             valid_images, valid_annotations = validation_dataset_reader.get_single_brain(i)
-            # Todo: divide tensors depth wise, due to memory issue
+            # Divide tensors depth wise, due to memory issue
             z_limit = valid_images.shape[0]
             for z in range(z_limit):
                 feed_image = valid_images[z, ...]

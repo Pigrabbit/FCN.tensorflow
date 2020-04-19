@@ -136,11 +136,10 @@ class BatchDatset:
         #     # Start next epoch
         #     start = 0
         #     self.batch_offset = batch_size
-
         # end = self.batch_offset
+        # print(f"Input Batches: from {start} to {end}")
         start = random.choice(list(range(50, 100, 1)))
         end = start + batch_size
-        # print(f"Input Batches: from {start} to {end}")
         return self.images[start:end], self.annotations[start:end]
 
     def get_random_batch(self, batch_size):

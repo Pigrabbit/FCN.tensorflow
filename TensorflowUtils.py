@@ -1,4 +1,5 @@
 __author__ = 'Charlie'
+__modified_by__ = 'Donghyuk'
 # Utils used with tensorflow implemetation
 import tensorflow as tf
 import numpy as np
@@ -17,8 +18,6 @@ def get_model_data(dir_path, model_url):
     if not os.path.exists(filepath):
         raise IOError("VGG Model not found!")
     data = scipy.io.loadmat(filepath)
-    # print(data.keys())
-    # print(type(data['meta']))
     return data
 
 
