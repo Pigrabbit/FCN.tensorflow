@@ -1,6 +1,6 @@
 .idea
 Model_zoo/*
-data/
+data/BraTS2018
 logs/images/
 logs/*.png
 *.pyc
