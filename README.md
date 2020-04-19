@@ -15,7 +15,7 @@ It takes convolutional layers from VGGNet(with out pooling) and concat with resu
 ![shape network architecture](https://user-images.githubusercontent.com/13795717/79685574-b99b4780-8274-11ea-94f0-77217a16a5a3.png)
 
 
-## Prerequsites
+## Prerequisites
 
 - The dataset is not provided. You can download it [here](https://www.med.upenn.edu/sbia/brats2018/data.html)
   - After download, unzip it and place it into `./data` directory. 
