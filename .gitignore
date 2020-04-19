@@ -1,6 +1,8 @@
 .idea
 Model_zoo/*
 data/
+logs/images/
+logs/*.png
 *.pyc
 *.csv
 .ipynb_checkpoints/
