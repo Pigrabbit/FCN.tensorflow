@@ -12,7 +12,9 @@ The shape network is designed to add low level feature to FCN predictions. Basic
 
 It takes convolutional layers from VGGNet(with out pooling) and concat with result from skip structure in FCN. The architecture is shown below.
 
-<img src="https://user-images.githubusercontent.com/13795717/79685574-b99b4780-8274-11ea-94f0-77217a16a5a3.png" alt="shape network architecture" width="800">
+<div align="center">
+  <img src="https://user-images.githubusercontent.com/13795717/79685574-b99b4780-8274-11ea-94f0-77217a16a5a3.png" alt="shape network architecture" width="800">
+</div>
 
 ## Prerequisites
 
