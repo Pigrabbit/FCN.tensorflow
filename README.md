@@ -32,10 +32,21 @@ It takes convolutional layers from VGGNet(with out pooling) and concat with resu
 
 ## Result
 
+Cross Entropy through training is shown below.
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/13795717/80185151-d35ad700-8646-11ea-8acb-94f36f7ed715.PNG" alt="cross_entropy_shape_network_256_to_64" width="200" height="150">
+
+  <img src="https://user-images.githubusercontent.com/13795717/80185183-e1105c80-8646-11ea-85e6-20a17382e924.PNG" alt="cross_entropy_shape_network_256_to_128" width="200" height="150">
+
+  <img src="https://user-images.githubusercontent.com/13795717/80185204-eff70f00-8646-11ea-8cf0-fd71e65d8d25.PNG" alt="cross_entropy_shape_network_256_to_256" width="200" height="150">
+</p>
+
 Considering ratio between result of skip structure and low level feature, with higher low level feature ratio, it was able to get more detailed prediction image. While, more likely to False Positive and Low Dice coefficient. On the other hand, with lower low level fearue ratio, it was able to get higher Dice coefficient.
 
 The visualized results are shown below. 
 
-![result_TCIA01_203_1_90](https://user-images.githubusercontent.com/13795717/79687019-5c58c380-827f-11ea-8047-31077cd0e149.PNG)
-
-![result_TCIA06_1_90](https://user-images.githubusercontent.com/13795717/79687007-4d721100-827f-11ea-85bb-0afc60c5cc01.PNG)
+<p align="center">
+<img src="https://user-images.githubusercontent.com/13795717/79687019-5c58c380-827f-11ea-8047-31077cd0e149.PNG" alt="brain case 1 gt-inp-fcn-shapeNet compare" width="500">
+<img src="https://user-images.githubusercontent.com/13795717/79687007-4d721100-827f-11ea-85bb-0afc60c5cc01.PNG" alt="brain case 1 gt-inp-fcn-shapeNet compare" width="500">
+</p>
