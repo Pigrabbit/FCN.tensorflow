@@ -43,6 +43,8 @@ Cross Entropy through training is shown as below.
 
 Considering ratio between result of skip structure and low level feature, with higher low level feature ratio, it was able to get more detailed prediction image. While, more likely to False Positive and Low [Dice coefficient](https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient). On the other hand, with lower low level fearue ratio, it was able to get higher Dice coefficient.
 
+The dice coefficient value in table is calculated on images **only which contains tumor**. Since the shape network tends to get False Positive, Dice coefficient calculated on entire images would be worse than the value in the table below.
+
 | Network | Dice Coefficient |
 | ------- | ----------------: |
 | `Fully Convolutional Network` | 0.759 |
