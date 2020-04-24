@@ -12,8 +12,7 @@ The shape network is designed to add low level feature to FCN predictions. Basic
 
 It takes convolutional layers from VGGNet(with out pooling) and concat with result from skip structure in FCN. The architecture is shown below.
 
-![shape network architecture](https://user-images.githubusercontent.com/13795717/79685574-b99b4780-8274-11ea-94f0-77217a16a5a3.png)
-
+<img src="https://user-images.githubusercontent.com/13795717/79685574-b99b4780-8274-11ea-94f0-77217a16a5a3.png" alt="shape network architecture" width="800">
 
 ## Prerequisites
 
@@ -32,21 +31,54 @@ It takes convolutional layers from VGGNet(with out pooling) and concat with resu
 
 ## Result
 
-Cross Entropy through training is shown below.
+Cross Entropy through training is shown as below.
 
-<p align="center">
+<div align="center">
   <img src="https://user-images.githubusercontent.com/13795717/80185151-d35ad700-8646-11ea-8acb-94f36f7ed715.PNG" alt="cross_entropy_shape_network_256_to_64" width="200" height="150">
 
   <img src="https://user-images.githubusercontent.com/13795717/80185183-e1105c80-8646-11ea-85e6-20a17382e924.PNG" alt="cross_entropy_shape_network_256_to_128" width="200" height="150">
 
   <img src="https://user-images.githubusercontent.com/13795717/80185204-eff70f00-8646-11ea-8cf0-fd71e65d8d25.PNG" alt="cross_entropy_shape_network_256_to_256" width="200" height="150">
-</p>
+</div>
 
-Considering ratio between result of skip structure and low level feature, with higher low level feature ratio, it was able to get more detailed prediction image. While, more likely to False Positive and Low Dice coefficient. On the other hand, with lower low level fearue ratio, it was able to get higher Dice coefficient.
+Considering ratio between result of skip structure and low level feature, with higher low level feature ratio, it was able to get more detailed prediction image. While, more likely to False Positive and Low [Dice coefficient](https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient). On the other hand, with lower low level fearue ratio, it was able to get higher Dice coefficient.
 
-The visualized results are shown below. 
+| Network | Dice Coefficient |
+| ------- | ----------------: |
+| `Fully Convolutional Network` | 0.759 |
+| `Shape Network 256_to_64` | 0.8131 |
 
-<p align="center">
-<img src="https://user-images.githubusercontent.com/13795717/79687019-5c58c380-827f-11ea-8047-31077cd0e149.PNG" alt="brain case 1 gt-inp-fcn-shapeNet compare" width="500">
-<img src="https://user-images.githubusercontent.com/13795717/79687007-4d721100-827f-11ea-85bb-0afc60c5cc01.PNG" alt="brain case 1 gt-inp-fcn-shapeNet compare" width="500">
-</p>
+The visualized results are shown as below. 
+
+### Case 1: Brats18_TCIA01_203
+
+<div align="center">
+  <p>Ground truth, mri image and Fully Covolutional Network predictions </p>
+  <img src="https://user-images.githubusercontent.com/13795717/80208504-53933380-866b-11ea-9749-7c1550c53f6a.png" alt="Ground Truth" width="200" height="200">
+  <img src="https://user-images.githubusercontent.com/13795717/80208505-555cf700-866b-11ea-8901-af3f36b20825.png" alt="inp" width="200" height="200">
+  <img src="https://user-images.githubusercontent.com/13795717/80208512-5726ba80-866b-11ea-98b8-2be960aaffa2.png" alt="FCN prediction" width="200" height="200">
+</div>
+<div align="center">
+  <p>Shape network predictions</p>
+  <img src="https://user-images.githubusercontent.com/13795717/80208653-a53bbe00-866b-11ea-921d-6dae8cb806db.png" alt="shapeNet ratio_256_to_64 prediction" width="200" height="200">
+  <img src="https://user-images.githubusercontent.com/13795717/80208671-aec52600-866b-11ea-8fab-c7173e63e220.png" alt="shapeNet ratio_256_to_128 prediction" width="200" height="200">
+  <img src="https://user-images.githubusercontent.com/13795717/80208721-c7354080-866b-11ea-9fcf-5bc809477354.png" alt="shapeNet ratio_256_to_256 prediction" width="200" height="200">
+</div>
+
+### Case 2: Brats18_TCIA06_409
+
+<div align="center">
+  <p>Ground truth, mri image and Fully Covolutional Network predictions </p>
+  <img src="https://user-images.githubusercontent.com/13795717/80210768-48420700-866f-11ea-8d68-82a05993bc6d.png" alt="Ground Truth" width="200" height="200">
+  <img src="https://user-images.githubusercontent.com/13795717/80210764-47a97080-866f-11ea-9f71-583e0cdc233d.png" alt="inp" width="200" height="200">
+  <img src="https://user-images.githubusercontent.com/13795717/80210770-48da9d80-866f-11ea-85d0-4ccfee09bf2a.png" alt="FCN prediction" width="200" height="200">
+</div>
+
+
+<div align="center">
+  <p>Shape network predictions</p>
+  <img src="https://user-images.githubusercontent.com/13795717/80211067-e9c95880-866f-11ea-8ddd-99f08c699c34.png" alt="shapeNet ratio_256_to_64 prediction" width="200" height="200">
+  <img src="https://user-images.githubusercontent.com/13795717/80211080-f3eb5700-866f-11ea-9a7e-246428fd6310.png" alt="shapeNet ratio_256_to_128 prediction" width="200" height="200">
+  <img src="https://user-images.githubusercontent.com/13795717/80211311-7542e980-8670-11ea-9881-7588f698061a.png" alt="shapeNet ratio_256_to_256 prediction" width="200" height="200">
+</div>
+
