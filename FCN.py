@@ -288,24 +288,53 @@ def main(argv=None):
         overlapped = 0
         for i in range(len(valid_records)):
             valid_images, valid_annotations = validation_dataset_reader.get_single_brain(i)
-            pred = sess.run(pred_annotation, feed_dict={image: valid_images, annotation: valid_annotations,
-                                                    keep_probability: 1.0})
-            valid_annotations = np.squeeze(valid_annotations, axis=3)
-            pred = np.squeeze(pred, axis=3)
+            #########################################
+            ## get dice coefficient of entire dataset
+            z_limit = valid_images.shape[0]
+            for z in range(z_limit):
+                feed_image = valid_images[z, ...]
+                feed_image = feed_image[None, ...]
+                feed_annotation = valid_annotations[z, ...]
+                feed_annotation = feed_annotation[None, ...]
+                pred = sess.run(pred_annotation, feed_dict={image: feed_image, annotation: feed_annotation,
+                                                            keep_probability: 1.0})
+                feed_annotation = np.squeeze(feed_annotation, axis=3)
+                pred = np.squeeze(pred, axis=3)
 
-            for itr in range(valid_images.shape[0]):
-                gt = np.asarray(valid_annotations[itr]).astype(np.bool)
+                gt = np.asarray(feed_annotation[0]).astype(np.bool)
                 if (gt.sum() == 0):
                     # case which has no tumor on the slice
-                    # evaluate dice score only for images which contain tumor in ground truth
                     continue
-                
-                seg = np.asarray(pred[itr]).astype(np.bool)
+
+                seg = np.asarray(pred[0]).astype(np.bool)
                 pixels = len(gt) * len(gt)
-                
+
                 gt_tumor += gt.sum()
                 seg_tumor += seg.sum()
                 overlapped += np.logical_and(gt, seg).sum()
+            ##########################################################
+
+            ##########################################################
+            ## get dice coefficient of images which contain tumor
+            # pred = sess.run(pred_annotation, feed_dict={image: valid_images, annotation: valid_annotations,
+            #                                         keep_probability: 1.0})
+            # valid_annotations = np.squeeze(valid_annotations, axis=3)
+            # pred = np.squeeze(pred, axis=3)
+            #
+            # for itr in range(valid_images.shape[0]):
+            #     gt = np.asarray(valid_annotations[itr]).astype(np.bool)
+            #     if (gt.sum() == 0):
+            #         # case which has no tumor on the slice
+            #         # evaluate dice score only for images which contain tumor in ground truth
+            #         continue
+            #
+            #     seg = np.asarray(pred[itr]).astype(np.bool)
+            #     pixels = len(gt) * len(gt)
+            #
+            #     gt_tumor += gt.sum()
+            #     seg_tumor += seg.sum()
+            #     overlapped += np.logical_and(gt, seg).sum()
+            #############################################################
 
         dice = 2 * overlapped / (gt_tumor + seg_tumor)
         print(f"DICE COEFFICIENT: {dice}")

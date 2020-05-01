@@ -122,6 +122,7 @@ class BatchDatset:
     def next_batch(self, batch_size):
         self._set_random_brain()
         self._read_images()
+        ##########################################
         # start = self.batch_offset
         # self.batch_offset += batch_size
         # if self.batch_offset > self.images.shape[0]:
@@ -138,6 +139,7 @@ class BatchDatset:
         #     self.batch_offset = batch_size
         # end = self.batch_offset
         # print(f"Input Batches: from {start} to {end}")
+        ###########################################
         start = random.choice(list(range(50, 100, 1)))
         end = start + batch_size
         return self.images[start:end], self.annotations[start:end]
