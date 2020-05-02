@@ -16,7 +16,8 @@ tf.flags.DEFINE_string("data_dir", "data/BraTS2018/MICCAI_BraTS_2018_Data_Traini
 tf.flags.DEFINE_float("learning_rate", "1e-5", "Learning rate for Adam Optimizer")
 tf.flags.DEFINE_string("model_dir", "Model_zoo/", "Path to vgg model mat")
 tf.flags.DEFINE_bool('debug', "False", "Debug mode: True/ False")
-tf.flags.DEFINE_string('mode', "train", "Mode train/ test/ visualize/ evalutate")
+tf.flags.DEFINE_string('mode', "train", "Mode train/ test/ visualize/ evaluate")
+tf.flags.DEFINE_string('eval_range', "tumor_only", "evaluation for tumor_only/ entire")
 
 MODEL_URL = 'http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat'
 
@@ -348,7 +349,7 @@ def main(argv=None):
                 pred = np.squeeze(pred, axis=3)
 
                 gt = np.asarray(feed_annotation[0]).astype(np.bool)
-                if (gt.sum() == 0) :
+                if (FLAGS.eval_range == "tumor_only" and gt.sum() == 0) :
                     # case which has no tumor on the slice
                     # evaluate dice score only for images which contain tumor in ground truth
                     continue

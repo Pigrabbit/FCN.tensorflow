@@ -16,7 +16,8 @@ tf.flags.DEFINE_string("data_dir", "data/BraTS2018/MICCAI_BraTS_2018_Data_Traini
 tf.flags.DEFINE_float("learning_rate", "1e-5", "Learning rate for Adam Optimizer")
 tf.flags.DEFINE_string("model_dir", "Model_zoo/", "Path to vgg model mat")
 tf.flags.DEFINE_bool('debug', "False", "Debug mode: True/ False")
-tf.flags.DEFINE_string('mode', "train", "Mode train/ test/ visualize/ evalutate")
+tf.flags.DEFINE_string('mode', "train", "Mode train/ test/ visualize/ evaluate")
+tf.flags.DEFINE_string('eval_range', "entire", "evaluation for tumor_only/ entire")
 
 MODEL_URL = 'http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat'
 
@@ -283,9 +284,9 @@ def main(argv=None):
         ##########################################################
 
     elif FLAGS.mode == "evaluate":
-        gt_tumor = 0
-        seg_tumor = 0
-        overlapped = 0
+        gt_tumor, seg_tumor, overlapped = 0, 0, 0
+        true_positive, true_negative, false_positive, false_negative = 0, 0, 0, 0
+
         for i in range(len(valid_records)):
             valid_images, valid_annotations = validation_dataset_reader.get_single_brain(i)
             #########################################
@@ -302,7 +303,7 @@ def main(argv=None):
                 pred = np.squeeze(pred, axis=3)
 
                 gt = np.asarray(feed_annotation[0]).astype(np.bool)
-                if (gt.sum() == 0):
+                if (FLAGS.eval_range == "tumor_only" and  gt.sum() == 0):
                     # case which has no tumor on the slice
                     continue
 
@@ -312,9 +313,24 @@ def main(argv=None):
                 gt_tumor += gt.sum()
                 seg_tumor += seg.sum()
                 overlapped += np.logical_and(gt, seg).sum()
-            ##########################################################
+
+                # gt: disease present/absence, seg: positive / negative test
+                # gt == True AND seg == True => True Positive
+                # gt == True AND seg == Negative => False Negative
+                # gt == False AND seg == True => False Positive
+                # gt == False AND seg == False => True Negative
+
+                tp = np.bitwise_and(gt, seg)
+                true_positive += tp.sum()
+                fn = np.bitwise_and(gt, np.invert(seg))
+                false_negative += fn.sum()
+                fp = np.bitwise_and(np.invert(gt), seg)
+                false_positive += fp.sum()
+                tn = np.bitwise_and(np.invert(gt), np.invert(seg))
+                true_negative += tn.sum()
 
             ##########################################################
+            '''
             ## get dice coefficient of images which contain tumor
             # pred = sess.run(pred_annotation, feed_dict={image: valid_images, annotation: valid_annotations,
             #                                         keep_probability: 1.0})
@@ -334,10 +350,16 @@ def main(argv=None):
             #     gt_tumor += gt.sum()
             #     seg_tumor += seg.sum()
             #     overlapped += np.logical_and(gt, seg).sum()
-            #############################################################
+            '''
 
         dice = 2 * overlapped / (gt_tumor + seg_tumor)
+        sensitivity = true_positive / (true_positive + false_negative)
+        specificity = true_negative / (true_negative + false_positive)
+        ppv = true_positive / (true_positive + false_positive)
+        npv = true_negative / (true_negative + false_negative)
         print(f"DICE COEFFICIENT: {dice}")
+        print(f"SENSITIVITY: {sensitivity}, SPECIFICITY: {specificity}")
+        print(f"PPV: {ppv}, NPV: {npv}")
 
 if __name__ == "__main__":
     tf.app.run()
