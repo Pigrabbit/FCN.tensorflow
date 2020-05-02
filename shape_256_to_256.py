@@ -17,7 +17,7 @@ tf.flags.DEFINE_float("learning_rate", "1e-5", "Learning rate for Adam Optimizer
 tf.flags.DEFINE_string("model_dir", "Model_zoo/", "Path to vgg model mat")
 tf.flags.DEFINE_bool('debug', "False", "Debug mode: True/ False")
 tf.flags.DEFINE_string('mode', "train", "Mode train/ test/ visualize/ evaluate")
-tf.flags.DEFINE_string('eval_range', "tumor_only", "evaluation for tumor_only/ entire")
+tf.flags.DEFINE_string('eval_range', "entire", "evaluation for tumor_only/ entire")
 
 MODEL_URL = 'http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat'
 
@@ -333,9 +333,9 @@ def main(argv=None):
             print(f"Saved image: {brain_name}_{z_idx}")
 
     elif FLAGS.mode == "evaluate":
-        gt_tumor = 0
-        seg_tumor = 0
-        overlapped = 0
+        gt_tumor, seg_tumor, overlapped = 0, 0, 0
+        true_positive, true_negative, false_positive, false_negative = 0, 0, 0, 0
+
         for i in range(len(valid_records)):
             valid_images, valid_annotations = validation_dataset_reader.get_single_brain(i)
             # Divide tensors depth wise, due to memory issue
@@ -363,8 +363,25 @@ def main(argv=None):
                 seg_tumor += seg.sum()
                 overlapped += np.logical_and(gt, seg).sum()
 
+                tp = np.bitwise_and(gt, seg)
+                true_positive += tp.sum()
+                fn = np.bitwise_and(gt, np.invert(seg))
+                false_negative += fn.sum()
+                fp = np.bitwise_and(np.invert(gt), seg)
+                false_positive += fp.sum()
+                tn = np.bitwise_and(np.invert(gt), np.invert(seg))
+                true_negative += tn.sum()
+
         dice = 2 * overlapped / (gt_tumor + seg_tumor)
+        sensitivity = true_positive / (true_positive + false_negative)
+        specificity = true_negative / (true_negative + false_positive)
+        ppv = true_positive / (true_positive + false_positive)
+        npv = true_negative / (true_negative + false_negative)
         print(f"DICE COEFFICIENT: {dice}")
+        print(f"SENSITIVITY: {sensitivity}, SPECIFICITY: {specificity}")
+        print(f"PPV: {ppv}, NPV: {npv}")
+        print(f"raw TRUE POSITIVE: {true_positive}, TRUE NEGATIVE: {true_negative}")
+        print(f"raw FALSE POSITIVE: {false_positive}, FALSE NEGATIVE: {false_negative}")
 
 if __name__ == "__main__":
     tf.app.run()

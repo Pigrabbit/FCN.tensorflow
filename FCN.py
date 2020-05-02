@@ -360,6 +360,8 @@ def main(argv=None):
         print(f"DICE COEFFICIENT: {dice}")
         print(f"SENSITIVITY: {sensitivity}, SPECIFICITY: {specificity}")
         print(f"PPV: {ppv}, NPV: {npv}")
+        print(f"raw TRUE POSITIVE: {true_positive}, TRUE NEGATIVE: {true_negative}")
+        print(f"raw FALSE POSITIVE: {false_positive}, FALSE NEGATIVE: {false_negative}")
 
 if __name__ == "__main__":
     tf.app.run()
