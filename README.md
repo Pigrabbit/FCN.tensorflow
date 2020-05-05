@@ -13,7 +13,7 @@ The shape network is designed to add low level feature to FCN predictions. Basic
 It takes convolutional layers from VGGNet(with out pooling) and concat with result from skip structure in FCN. The architecture is shown below.
 
 <div align="center">
-  <img src="https://user-images.githubusercontent.com/13795717/79685574-b99b4780-8274-11ea-94f0-77217a16a5a3.png" alt="shape network architecture" width="800">
+  <img src="https://user-images.githubusercontent.com/13795717/81071032-14909800-8f1f-11ea-85c7-d73f6fd9f985.PNG" alt="shape network architecture" width="800">
 </div>
 
 ## Prerequisites
@@ -41,16 +41,21 @@ Cross Entropy through training is shown as below.
   <img src="https://user-images.githubusercontent.com/13795717/80185183-e1105c80-8646-11ea-85e6-20a17382e924.PNG" alt="cross_entropy_shape_network_256_to_128" width="200" height="150">
 
   <img src="https://user-images.githubusercontent.com/13795717/80185204-eff70f00-8646-11ea-8cf0-fd71e65d8d25.PNG" alt="cross_entropy_shape_network_256_to_256" width="200" height="150">
+  
 </div>
 
-Considering ratio between result of skip structure and low level feature, with higher low level feature ratio, it was able to get more detailed prediction image. While, more likely to False Positive and Low [Dice coefficient](https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient). On the other hand, with lower low level fearue ratio, it was able to get higher Dice coefficient.
+[Dice coefficient](https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient), sensitivity and specificity are used as metric of model's performance. 
+The comparison of performance between Shape Network and FCN is shown as below.
 
-The dice coefficient value in table is calculated on images **only which contains tumor**. Since the shape network tends to get False Positive, Dice coefficient calculated on entire images would be worse than the value in the table below.
+<div align="center">
+  <img src="https://user-images.githubusercontent.com/13795717/81071398-9c76a200-8f1f-11ea-8356-4f9201dc9bd8.png" alt="Dice Coefficient" width="350">
+  <img src="https://user-images.githubusercontent.com/13795717/81071483-c0d27e80-8f1f-11ea-972b-8c1ab250c692.png" alt="dice-coefficient-tumor" width="350">
+</div>
 
-| Network | Dice Coefficient |
-| ------- | ----------------: |
-| `Fully Convolutional Network` | 0.759 |
-| `Shape Network 256_to_64` | 0.8131 |
+<div align="center">
+  <img src="https://user-images.githubusercontent.com/13795717/81071645-f9725800-8f1f-11ea-9639-aea945ed2eb3.png" alt="sensitivity" width="350">
+  <img src="https://user-images.githubusercontent.com/13795717/81071684-068f4700-8f20-11ea-87b0-ab47bb171c2b.png" alt="specificity" width="350">
+</div>
 
 The visualized results are shown as below. 
 
